@@ -1,0 +1,80 @@
+<div class="row header-nav">
+	<div class="col-xs-6 col-sm-6 col-md-8 col-lg-8">Helix Live Customer Assistance</div>
+	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" ><a href="#" id="exit_btn"><input type="button" class="btn btn-link" value="Exit"></a></div>
+</div>
+<div class="row">
+	<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+		<div class="message_container">
+			<div id="message_area"></div>
+			<div id="agent_typing"></div>
+			
+			<div id="message_input"><input type="text" name="input_text" id="input_text" placeholder="Type your message here..."></div>
+		</div>
+	</div>
+	
+	<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+		<div class="row side-bar">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 logo"><img class="img-responsive" src="/images/chat-logo.png" alt="Chat Logo"></div>
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 send"><input type="button" id="send_btn" class="btn btn-success" value="Send"></div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+socket.emit('join', 'new');
+socket.on('serverMessage', function(content){
+	$('#message_area').append('<p>'+content+'</p>');
+})
+
+socket.on('agentConnected', function(content){
+	var msg = '<b>'+content+'</b>';
+	$('#message_area').append('<p class="green">'+msg+'</p>');
+})
+
+socket.on('agentDisconnected', function(content){
+	var msg = '<b>'+content+'</b>';
+	$('#message_area').append('<p class="red">'+msg+'</p>');
+})
+
+socket.on('clientMessage', function(content){
+	var msg = "<b>[ Me ] :</b>" + content.msg;
+	$('#message_area').append('<p>'+msg+'</p>');
+})
+
+socket.on('agentTyping', function(content){
+	var msg = "<em>"+content+"</em";
+	$('.message_container #agent_typing').html('<p id="tmp">'+msg+'</p>');
+})
+
+socket.on('agentMessage', function(content){
+	var msg = "<b>[ "+content.agent+" ] :</b>" + content.msg;
+	$('.message_container #agent_typing').html('');
+	$('#message_area').append('<p>'+msg+'</p>');
+})
+
+$('#input_text').keypress(function(event){
+	socket.emit('clientTyping', 'data');
+	var keycode = (event.keyCode ? event.keyCode : event.which);
+	if(keycode == '13')
+	{
+		var msg = $('#input_text').val();
+		$('#input_text').val('');
+		if(msg != '')
+		socket.emit('clientMessage', msg);
+	}
+	event.stopPropagation();
+})
+
+$('#send_btn').click(function(){
+	var msg = $('#input_text').val();
+		$('#input_text').val('');
+		if(msg != '')
+		socket.emit('clientMessage', msg);
+})
+
+$('#exit_btn').click(function(){
+	socket.disconnect();
+	$('#message_area').append('<p class="red">You have left the chat</p>');
+})
+
+</script>

@@ -1,0 +1,123 @@
+<div class="row cp-header-nav">
+	<div class="col-xs-6 col-sm-6 col-md-8 col-lg-8">Helix Live Customer Assistance</div>
+	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" ><a href="#" id="cp-exit_btn"><input type="button" class="btn btn-link" value="Exit"></a></div>
+</div>
+<div class="row">
+	<div class="col-xs-5 col-sm-5 col-md-4 col-lg-4 cp-side-bar">
+		<ul id="cp-user-list">
+			
+		</ul>
+	</div>
+	<div class="col-xs-7 col-sm-7 col-md-8 col-lg-8 cp-message_container">
+		<div id="cp-message_area"></div>
+		<div id="cp-client_typing"></div>
+		
+		<div id="cp-message_input"><input type="text" name="input_text" id="input_text" placeholder="Type your message here..."></div>
+	</div>
+</div>
+
+<audio id="ring" src="http://www.enterhelix.com/helix-chat/views/ring.mp3" preload="auto"></audio>
+
+<script type="text/javascript">
+var query = location.search.substring(1);
+
+{{!--When Agent first joins --}}
+socket.emit('agentConnected', 'data');
+
+{{!--If this is a new window, with another client --}}
+if(query)
+	socket.emit('takeClient', query);
+
+socket.on('agentConnected', function(data){
+	var str = '';
+	
+	$.each(data.users, function(index, value){
+		if(value.agent == '')
+			str = str + '<li><a class="chat" href="javascript:takeClient(\''+value.room+'\')">'+value.user + '&nbsp;&nbsp;&nbsp;<span>---in queue---</span></a><a class="take" href="javascript:takeClient(\''+value.room+'\')"><input type="button" class="btn btn-sm btn-success" value="Take it"></a></li>';
+		else
+			str = str + '<li><a class="chat" href="javascript:takeClient(\''+value.room+'\')">'+value.user + '&nbsp;&nbsp;&nbsp;<span>---chatting with---</span> &nbsp;&nbsp;&nbsp;'+ value.agent+'</a></li>';
+	})
+	$('#cp-user-list').html(str);
+	$('#cp-message_area').append('<p>You are now online as '+data.agent+'</p>')
+})
+
+{{!--This will not get called when a new client is calling or existing client is disconnected--}}
+socket.on('updateClientList', function(data){
+	var str = '';
+	
+	$.each(data, function(index, value){
+		if(value.agent == '')
+			str = str + '<li><a class="chat" href="javascript:takeClient(\''+value.room+'\')">'+value.user + '&nbsp;&nbsp;&nbsp;<span>---in queue---</span></a><a class="take" href="javascript:takeClient(\''+value.room+'\')"><input type="button" class="btn btn-sm btn-success" value="Take it"></a></li>';
+		else
+			str = str + '<li><a class="chat" href="javascript:takeClient(\''+value.room+'\')">'+value.user + '&nbsp;&nbsp;&nbsp;<span>---chatting with---</span> &nbsp;&nbsp;&nbsp;'+ value.agent+'</a></li>';
+	})
+	$('#cp-user-list').html(str);
+})
+
+socket.on('clientTyping', function(content){
+	var msg = "<em>"+content+"</em";
+	$('.cp-message_container #cp-client_typing').html(msg);
+})
+
+socket.on('clientDisconnected', function(content){
+	$('#cp-message_area').append('<p class="red">'+content.user+' has left the chat</p>');
+
+	{{!--Also, we need to remove the Agent from the room--}}
+	socket.emit('disconnectAgent',content.room)
+})
+
+{{!--Client message gets displayed in the message_area --}}
+socket.on('clientMessage', function(content){
+	var msg = "<b>[ "+content.user+" ] :</b>" + content.msg;
+	$('.cp-message_container #cp-client_typing').html('');
+	$('#cp-message_area').append('<p>'+msg+'</p>');
+})
+
+{{!--Agent message gets displayed in the message_area --}}
+socket.on('agentMessage', function(content){
+	var msg = "<b>[ Me ] :</b>" + content.msg;
+	$('#cp-message_area').append('<p>'+msg+'</p>');
+})
+
+socket.on('newWindow', function(data){
+	window.open('http://www.enterhelix.com:5131/controlpanel?' + data, '_blank');
+})
+
+socket.on('startRing', function(data){
+	document.getElementById('ring').play();
+	document.getElementById('ring').loop = true;
+})
+
+socket.on('stopRing', function(data){
+	document.getElementById('ring').pause();
+})
+
+{{!--Agent takes a client --}}
+function takeClient(room)
+{
+	socket.emit('takeClient', room);
+}
+
+{{!--A message to display in Agents interface, with which user agent is currently chatting with --}}
+socket.on('withClientNow', function(content){
+	$('#cp-message_area').append('<p class="green">'+content+'</p>');
+})
+
+{{!--Alerting that the agent is already chatting with this cleint, why open another window --}}
+socket.on('alreadyActive', function(content){
+	alert(content);
+})
+
+$('#input_text').keypress(function(event){
+	socket.emit('agentTyping', 'data');
+	var keycode = (event.keyCode ? event.keyCode : event.which);
+	if(keycode == '13')
+	{
+		var msg = $('#input_text').val();
+		$('#input_text').val('');
+		if(msg != '')
+		socket.emit('agentMessage', msg);
+	}
+	event.stopPropagation();
+})
+</script>

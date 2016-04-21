@@ -331,7 +331,7 @@ app.all('*', function(req,res){
     res.sendStatus(404);
 });
 
-app.set('port', process.env.PORT || 5131);
+app.set('port', process.env.PORT || 6666);
 server.listen(app.get('port'), function(){
   console.log('Express server litening on port' + app.get('port')
     );
