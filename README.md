@@ -1,12 +1,11 @@
-# node_projects
-Multi Agent, Multi Client chat
+# Multi Agent, Multi Client chat
 
 Helix Chat (Open Source)
 Free to modify, contribute.
 
 Summary:
 
-I wrote this support chat service in approx. 4 days. It uses Node.js socket.io. Beautification of the User interface is also done to some extent. Perhaps some more beautification is required. Client side coding is mainly done using Handlebars, but you can always use any template engine of your choice. It also uses Bootstrap and jQuery.
+I wrote this support chat service in approx. 4 days. It uses Node.js socket.io. Beautification of the User interface is also done to some extent. Perhaps some more beautification is required. Client side coding is mainly done using Handlebars, but you can always use any template engine of your choice. It also used Bootstrap and jQuery.
 
 The chat server does not use any Database, hence no hassle of installation.  It uses a credentials file (json), where you can store all your agents usernames/ passwords.
 
