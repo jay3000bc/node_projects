@@ -19,6 +19,7 @@
 ## Introduction
 This project is a Chat application consisting of a frontend built with React and a backend built using Node.js and MongoDB. The application allows users to chat between users and agents.
 
+
 ## Directory Structure
 The project has the following directory structure:
 ```
