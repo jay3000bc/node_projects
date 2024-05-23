@@ -62,12 +62,12 @@ The project has the following directory structure:
 ## Frontend
 
 ### Deployment
-To deploy the frontend in the `/dipankar/frontend/chatbot` folder, follow these steps:
+To deploy the frontend , follow these steps:
 
-1. Set the `baseUrl` of the frontend project. For example, if the base URL is `https://www.alegralabs.com/dipankar/frontend/chatbot`, then the `baseUrl` will be `/dipankar/frontend/chatbot`.
-2. Add `base: "/dipankar/frontend/chatbot/"` in the `vite.config.ts` file and in `./src/config.tsx`, add the basename to the Router tag: `<Router basename='/dipankar/frontend/chatbot/'>`.
+1. Set the `baseUrl` of the frontend project. For example, if the base URL is `https://www.alegralabs.com/ANY_FOLDER_NAME`, then the `baseUrl` will be `ANY_FOLDER_NAME`.
+2. Add `base: "/ANY_FOLDER_NAME"` in the `vite.config.ts` file and in `./src/config.tsx`, add the basename to the Router tag: `<Router basename='/ANY_FOLDER_NAME'>`.
 3. Open the terminal and run `npm run build` to build the app for production, which will create the `dist` folder.
-4. Copy the contents of the `dist` folder to the `/dipankar/frontend/chatbot/` or the desired folder on the server.
+4. Copy the contents of the `dist` folder to the `ANY_FOLDER_NAME` or the desired folder on the server.
 
 ### Icon and Title
 To update the icon, title, and other metadata of the application, go to the `./src/config.tsx` file in the frontend folder and make the necessary changes.
@@ -82,16 +82,14 @@ In the `backend` directory:
 1. Open the terminal and run the command `npx tsc`. This will create a `dist` folder containing all the compiled files.
 2. Copy the `.env` file to the `dist` folder.
 3. Copy the entire backend folder to the server or use `git pull` if the code is updated in GitHub.
-4. (Optional) Depending on the server and the type of deployment, run the `5001.service` file. Note: use Node version `16.20.2`.
+4. (Optional) Depending on the server and the type of deployment, run the `NAME.service` file. Note: use Node version `16.20.2`.
 
 ### Environment Variables
 Create a `.env` file in the `backend` directory and add the following variables:
 ```
-EMAIL_PASSWORD=your-gmail-app-password
-EMAIL_ID=your-email
+EMAIL_PASSWORD=your-gmail-app-password-for-sending-chat-transcript
+EMAIL_ID=your-email-for-sending-chat-transcript
 DB=chats
-USERS_COLLECTION=users
-CHAT_COLLECTION=chat-details
 MONGO_URI=your-mongodb-uri
 ACCESS_TOKEN_SECRET=your-accesstoken-secret-key
 ACCESS_TOKEN_EXPIRY=1h
